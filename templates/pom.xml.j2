@@ -1,0 +1,35 @@
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>hmcts</groupId>
+    <artifactId>owap-update</artifactId>
+    <version>1.0</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>2.1.1</version>
+                <dependencies>
+                  <dependency>
+                      <groupId>org.postgresql</groupId>
+                      <artifactId>postgresql</artifactId>
+                      <version>42.1.4</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <databaseDriverName>org.postgresql.Driver</databaseDriverName>
+                    <connectionString>jdbc:postgresql://localhost/{{ postgresql_database[0].name }}</connectionString>
+                    <databaseUser>{{ postgresql_user[0].name }}</databaseUser>
+                    <databasePassword>{{ postgresql_user[0].password }}</databasePassword>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>update-only</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

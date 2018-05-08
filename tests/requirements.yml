@@ -1,0 +1,11 @@
+---
+
+- name: devops.repos
+  src: git@github.com:hmcts/repos-role.git
+  scm: git
+  version: master
+
+- name: devops.postgres
+  src: git@github.com:hmcts/postgresql-role.git
+  scm: git
+  version: master

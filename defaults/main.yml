@@ -1,0 +1,14 @@
+maven_major: 3
+maven_version: 3.5.0
+maven_home_parent_directory: /opt
+
+postgresql_user:
+  - name: "owasp"
+    password: "setmeplease"
+
+postgresql_database:
+  - name: "owasp_db"
+
+postgresql_custom_sql:
+  - db: "owasp_db"
+    sql: "GRANT CREATE, USAGE ON SCHEMA public TO owasp;"

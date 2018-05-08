@@ -1,0 +1,11 @@
+epel:
+  repourl: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
+  gpgkey: "/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7"
+  filepath: "/etc/yum.repos.d/epel.repo"
+
+postgresql_user:
+  - name: "owasp_adm"
+    password: "setmeplease"
+
+postgresql_database:
+  - name: "owasp_db"

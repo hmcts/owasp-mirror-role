@@ -1,0 +1,79 @@
+---
+- name: Install Java
+  yum: name=java state=present
+
+- name: Checking if Maven is already installed
+  stat:
+    path: "{{ maven_home_parent_directory }}/apache-maven-{{ maven_version }}"
+  become: yes
+  register: maven_installed
+
+- name: Unarchive maven
+  unarchive:
+    src: "http://www.apache.org/dist/maven/maven-{{ maven_major }}/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz"
+    dest: "{{maven_home_parent_directory}}"
+    copy: no
+  become: yes
+  when: maven_installed.stat.exists != True
+
+- name: Remove old path configuration
+  file:
+    path: /etc/profile.d/maven.sh
+    state: absent
+  become: yes
+
+- name: Maven path configuration
+  lineinfile:
+    dest: /etc/profile.d/maven.sh
+    line: "{{ item.line }}"
+    create: yes
+    state: present
+  become: yes
+  with_items:
+    - { line: 'M2_HOME={{maven_home_parent_directory}}/apache-maven-{{maven_version}}' }
+    - { line: 'PATH=$PATH:$M2_HOME/bin' }
+
+- name: Ensures /opt/owasp dir exists
+  file:
+    path=/opt/owasp/
+    state=directory
+  become: yes
+
+- name: Copy OWAP schema SQL
+  template:
+    src: initialize.sql.j2
+    dest: /opt/owasp/initialize.sql
+    owner: root
+    group: root
+    mode: 0744
+  become: yes
+
+- name: Create OWASP schema
+  become: yes
+  become_user: postgres
+  command: "psql -d owasp_db -f /opt/owasp/initialize.sql -p '{{ postgresql_listen_port | default('5432')}}'"
+  ignore_errors: no
+  changed_when: false
+  run_once: true
+
+- name: Creates /etc/owasp
+  file: path=/etc/owasp state=directory
+  become: yes
+
+- name: Copy Maven POM
+  template:
+    src: pom.xml.j2
+    dest: /opt/owasp/pom.xml
+    owner: root
+    group: root
+    mode: 0744
+  become: yes
+
+- name: "Set cron to update OWASP database"
+  cron:
+    name: "Update OWASP database"
+    hour: "*/6"
+    minute: "0"
+    job: "mvn -f /opt/owasp/pom.xml dependency-check:update-only"
+    state: present
+  become: yes
