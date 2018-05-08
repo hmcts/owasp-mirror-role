@@ -4,7 +4,7 @@ maven_home_parent_directory: /opt
 
 postgresql_user:
   - name: "owasp"
-    password: "setmeplease"
+    #password: "setmeplease"
 
 postgresql_database:
   - name: "owasp_db"

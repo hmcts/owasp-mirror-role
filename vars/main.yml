@@ -5,7 +5,7 @@ epel:
 
 postgresql_user:
   - name: "owasp_adm"
-    password: "setmeplease"
+    #password: "setmeplease"
 
 postgresql_database:
   - name: "owasp_db"
